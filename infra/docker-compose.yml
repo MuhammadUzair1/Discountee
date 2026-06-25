@@ -1,0 +1,28 @@
+# Local development services.
+# Usage (from the infra/ directory):  docker compose up -d
+name: bankdiscounts
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: bankdiscounts-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bankdiscounts
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.volumes/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bankdiscounts"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Used later for caching hot search/geo queries (and as a job broker).
+  redis:
+    image: redis:7-alpine
+    container_name: bankdiscounts-redis
+    ports:
+      - "6379:6379"

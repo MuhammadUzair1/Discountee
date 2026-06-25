@@ -1,0 +1,47 @@
+# ---- Python / backend ----
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- Node (root-level only; frontend has its own .gitignore) ----
+node_modules/
+
+# ---- Next.js build (in case of root-level tooling) ----
+.next/
+out/
+build/
+
+# ---- Environment / secrets ----
+.env
+.env.local
+.env.*.local
+# keep examples tracked
+!.env.example
+!**/.env.example
+
+# ---- Data artifacts (raw scrapes & caches stay out of git) ----
+data/raw/
+data/cache/
+*.sqlite
+*.db
+
+# ---- Infra local volumes ----
+infra/.volumes/
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- OS / IDE ----
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
