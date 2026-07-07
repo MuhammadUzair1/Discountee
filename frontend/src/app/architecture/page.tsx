@@ -26,8 +26,8 @@ export default function ArchitecturePage() {
         </h1>
         <p className="mt-4 text-balance text-lg text-muted">
           Discountee is a data pipeline with a friendly face. Offers are scraped,
-          cleaned by an LLM, stored, served through an API, and rendered here —
-          each step using the right tool for the job.
+          cleaned by an LLM, and stored in Supabase — which the app reads directly.
+          Each step uses the right tool for the job.
         </p>
         <div className="mt-5 flex items-center justify-center gap-4 text-xs text-muted">
           <span className="inline-flex items-center gap-1.5">
@@ -86,8 +86,8 @@ export default function ArchitecturePage() {
       <section className="mt-16">
         <div className="rounded-2xl border border-brand/15 bg-brand-soft px-6 py-6 text-sm leading-relaxed text-brand-strong">
           <span className="font-semibold">Decoupled by design.</span> Ingestion and
-          serving talk only through the database, so a broken scraper never takes
-          the site down. The front end is live now; the ingestion, LLM and API
+          the app talk only through Supabase, so a broken scraper never takes the
+          site down. The front end is live now; the ingestion, LLM and Supabase data
           layers are built out in phases — see the roadmap in the project docs.
         </div>
         <div className="mt-6 text-center">

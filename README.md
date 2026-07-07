@@ -31,33 +31,33 @@ The idea is strong and the market is real, but the hardest problems are **not** 
 bank-discounts-pk/
 ├─ docs/         # the founding plan (read these first)
 ├─ frontend/     # Next.js 16 + React 19 + Tailwind 4 (App Router, TS)  → Vercel
-├─ backend/      # FastAPI + SQLAlchemy + PostGIS (serving + admin API) → container
-├─ ingestion/    # scrapers + extraction pipeline (Phase 2; structure only for now)
-├─ infra/        # docker-compose for local Postgres/PostGIS + Redis
+├─ supabase/     # Postgres schema + seed + RLS — Supabase is the backend
+├─ ingestion/    # Python scrapers + Airflow (Phase 2; structure only for now)
 └─ data/         # seed datasets (tracked) + raw/cache artifacts (ignored)
 ```
 
-A monorepo keeps the shared offer schema honest across `backend` and `ingestion`.
+**Supabase** (managed Postgres + auto REST/Realtime + Auth + Storage) is the backend:
+the frontend reads it directly via `@supabase/supabase-js`, and the Python ingestion
+writes into it with the service-role key. There is no hand-written CRUD service.
 
 ## Getting started
 
-**Frontend (current focus):**
+**Frontend:**
 ```bash
 cd frontend
-cp .env.example .env.local      # set NEXT_PUBLIC_API_BASE_URL
-npm install                     # already installed by scaffolding
+cp .env.example .env.local      # add your Supabase URL + anon key (or leave blank for mock data)
+npm install
 npm run dev                     # http://localhost:3000
 ```
 
-**Backend (later phase):** see [backend/README.md](backend/README.md).
-**Local database:** see [infra/README.md](infra/README.md).
+**Supabase (backend):** see [supabase/README.md](supabase/README.md) to create the project and load the schema/seed.
 
 ## Status / next steps
 
 - [x] Founding plan & architecture docs
-- [x] Monorepo scaffold (frontend, backend skeleton, infra, ingestion stub)
-- [ ] **Frontend build — in progress** (current phase)
-- [ ] Canonical schema → SQLAlchemy models + first Alembic migration
-- [ ] Read API over seed data
-- [ ] Ingestion pipeline (Phase 2)
+- [x] Monorepo scaffold + design system
+- [x] Frontend: home, browse, offer detail, animated architecture page
+- [x] Supabase data layer (schema + seed + RLS; frontend reads via supabase-js, mock fallback)
+- [ ] Connect a live Supabase project & verify
+- [ ] Ingestion pipeline: Python scrapers → Supabase, scheduled by Airflow (Phase 2)
 

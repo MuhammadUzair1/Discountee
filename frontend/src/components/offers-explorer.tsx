@@ -9,7 +9,7 @@ import type {
   Offer,
   OfferFilters,
 } from "@/lib/types";
-import { matchesFilters } from "@/lib/api";
+import { matchesFilters } from "@/lib/offer-filters";
 import { ALL_NETWORKS, ALL_TIERS } from "@/lib/utils";
 import { OfferCard } from "./offer-card";
 

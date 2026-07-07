@@ -14,7 +14,10 @@ A lightweight decision log (ADR-lite) plus the questions we must answer. Update 
 | D6 | **Never store real card numbers**; users pick card *types* only | Stays out of PCI scope; minimal PII | Adopted |
 | D7 | Store **normalized facts**, keep raw artifacts internal-only | Copyright/IP safety + data quality | Adopted |
 | D8 | MVP = catalog/browse; **wallet + near-me is the Phase-3 headline** | Ship simple to validate; build the habit-forming feature deliberately | Adopted |
-| D9 | Deploy backend as single container on managed PaaS; Vercel for frontend | Avoid premature ops; path to ECS/EC2 preserved | Adopted |
+| D9 | Deploy backend as single container on managed PaaS; Vercel for frontend | Avoid premature ops; path to ECS/EC2 preserved | Superseded by D10 |
+| D10 | **Supabase as the backend/BaaS for all CRUD** (managed Postgres + auto REST/Realtime + Auth + Storage + RLS), replacing the hand-written FastAPI CRUD service. PostGIS still available for geo. | Eliminates backend boilerplate; managed Postgres + instant API + auth + storage in one; frontend reads directly. Supersedes the custom-API parts of D1/D9. | Adopted |
+| D11 | **Frontend reads Supabase directly** via `@supabase/supabase-js` (anon key + read-only RLS); **ingestion writes** via the service-role key. Frontend keeps a typed **mock fallback** when keys are unset. | Standard Supabase pattern; no API tier to maintain; app still runs with zero setup. | Adopted |
+| D12 | **Python + Airflow retained for scraping/ingestion only**, writing into Supabase (service role). No Python serving API. | Scraping genuinely needs Python (Playwright/BS); Supabase covers everything else. | Adopted |
 
 ## Open questions — must answer before/while building
 

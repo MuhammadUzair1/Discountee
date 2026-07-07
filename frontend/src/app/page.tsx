@@ -9,8 +9,9 @@ import {
 } from "lucide-react";
 import { CardSelector } from "@/components/card-selector";
 import { OfferCard } from "@/components/offer-card";
-import { getFeaturedOffers } from "@/lib/api";
-import { banks, offers } from "@/lib/data";
+import { getBanks, getFeaturedOffers, getOffers } from "@/lib/api";
+
+export const revalidate = 300;
 
 const STEPS = [
   {
@@ -31,7 +32,11 @@ const STEPS = [
 ];
 
 export default async function Home() {
-  const featured = await getFeaturedOffers(6);
+  const [featured, banks, offers] = await Promise.all([
+    getFeaturedOffers(6),
+    getBanks(),
+    getOffers(),
+  ]);
   const cityCount = new Set(offers.flatMap((o) => o.cities)).size;
 
   return (

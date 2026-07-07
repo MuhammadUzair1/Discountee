@@ -11,6 +11,7 @@ import {
   SiPython,
   SiReact,
   SiRedis,
+  SiSupabase,
   SiTailwindcss,
   SiTypescript,
   SiVercel,
@@ -85,7 +86,8 @@ export const TECH: Record<string, TechDef> = {
   docker: { name: "Docker", color: "#2496ED", Icon: SiDocker },
   aws: { name: "AWS", color: "#FF9900", Icon: AwsLogo, multicolor: true },
 
-  // Data & storage
+  // Backend (BaaS) & storage
+  supabase: { name: "Supabase", color: "#3FCF8E", Icon: SiSupabase },
   postgresql: { name: "PostgreSQL", color: "#4169E1", Icon: SiPostgresql },
   redis: { name: "Redis", color: "#DC382D", Icon: SiRedis },
   pandas: { name: "pandas", color: "#150458", Icon: SiPandas },

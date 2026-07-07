@@ -1,6 +1,7 @@
 # Ingestion pipeline (Phase 2 — not built yet)
 
-Decoupled from the serving API. Communicates with the app **only through the database**, so
+Python scrapers, scheduled by **Apache Airflow**, that write into **Supabase** using the
+**service-role** key. Decoupled from the app — they communicate only through Supabase, so
 scraper breakage or LLM latency never affects users.
 
 ## Tiered fetch → extract → normalize → verify → upsert
@@ -12,16 +13,18 @@ scraper breakage or LLM latency never affects users.
 4. IMAGE    OCR (Tesseract) or a multimodal LLM that returns structured fields
    ↓
 5. NORMALIZE  LLM with structured output → canonical offer schema (facts, our words)
-6. VALIDATE   schema + business rules + human review (admin UI) until precision is proven
-7. UPSERT     Postgres, with provenance (source_url, raw artifact ref, confidence)
+6. VALIDATE   schema + business rules + human review until precision is proven
+7. UPSERT     Supabase (service-role key), with provenance (source_url, confidence);
+              raw artifacts (HTML/PDF/image) → Supabase Storage
 ```
 
 ## Planned layout
 ```
 ingestion/
-├─ sources/     # one module per bank (fetch + extract)
-├─ extract/     # html / pdf / image / llm extractors (shared)
-└─ pipeline.py  # orchestration (cron/APScheduler first; Prefect/Airflow only at scale)
+├─ sources/          # one module per bank (fetch + extract)
+├─ extract/          # html / pdf / image / llm extractors (shared)
+├─ supabase_writer.py# upsert normalized offers into Supabase (service role)
+└─ dags/             # Airflow DAGs (schedule the runs)
 ```
 
 See [../docs/03-technical-architecture.md](../docs/03-technical-architecture.md) for the full
