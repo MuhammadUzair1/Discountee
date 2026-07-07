@@ -1,6 +1,10 @@
 # Backend — FastAPI
 
-Serving + admin API for the bank-discount platform. Talks to PostgreSQL (PostGIS).
+Serving API for Discountee. Returns offer/bank data in **camelCase** so it is a
+drop-in replacement for the frontend's mock data layer (`frontend/src/lib/api.ts`).
+
+DB-agnostic: **SQLite by default** for zero-infra local dev; point `DATABASE_URL`
+at Postgres (PostGIS) for production.
 
 ## Layout
 ```
@@ -8,31 +12,46 @@ backend/
 ├─ app/
 │  ├─ main.py            # FastAPI app, CORS, /health
 │  ├─ core/config.py     # settings (env-driven, pydantic-settings)
-│  ├─ api/v1/            # versioned API routers
-│  │  ├─ router.py       # aggregates v1 routers
-│  │  └─ routes/         # one module per resource (health, later: offers, banks...)
 │  ├─ db/                # SQLAlchemy base + session
-│  └─ models/            # ORM models (added in the data-model phase)
+│  ├─ models/            # ORM models: Bank, Merchant, Offer
+│  ├─ schemas.py         # Pydantic schemas (camelCase aliases)
+│  ├─ crud.py            # query + filter logic
+│  ├─ seed.py            # sample data (mirrors the frontend mock)
+│  └─ api/v1/routes/     # health, banks, offers
+├─ alembic/             # migrations
 ├─ requirements.txt
-├─ Dockerfile
-└─ .env.example
+└─ Dockerfile
 ```
 
-## Run locally (Phase 2+ — frontend comes first)
-> Use **Python 3.12** for the smoothest dependency install. The machine's default is 3.14,
-> which may lack prebuilt wheels for some libraries. Create the venv with a 3.12 interpreter if available.
+## Run locally
+> Use **Python 3.10** (the machine's 3.14 lacks wheels for some deps; 3.12 also fine).
+> Run commands from the `backend/` directory.
 
-```bash
+```powershell
 cd backend
-python -m venv .venv
-.venv\Scripts\activate          # Windows PowerShell: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-cp .env.example .env            # then edit values
-uvicorn app.main:app --reload --port 8000
+py -3.10 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+.venv\Scripts\alembic.exe upgrade head     # create tables (SQLite: discountee.db)
+.venv\Scripts\python.exe -m app.seed        # load sample data
+.venv\Scripts\uvicorn.exe app.main:app --reload --port 8000
 ```
 
 - Health: http://localhost:8000/health
-- Versioned ping: http://localhost:8000/api/v1/ping
-- Interactive docs: http://localhost:8000/docs
+- Interactive docs (try the endpoints): http://localhost:8000/docs
 
-A local PostGIS database can be started from `../infra` (see `infra/README.md`).
+## Endpoints (`/api/v1`)
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/banks` | all banks |
+| GET | `/cities` | distinct cities |
+| GET | `/offers` | filters: `bank`, `network`, `tier`, `city`, `vertical`, `q` |
+| GET | `/offers/featured?limit=` | top offers by discount |
+| GET | `/offers/{id}` | single offer (404 if missing) |
+
+## Switching to Postgres
+1. Start the local DB: `cd ../infra && docker compose up -d` (Postgres + PostGIS).
+2. Set `DATABASE_URL="postgresql+psycopg://postgres:postgres@localhost:5432/discountee"`.
+3. `alembic upgrade head` then `python -m app.seed`.
+
+Migrations use `render_as_batch`, so the same Alembic history works on SQLite and Postgres.
